@@ -11,14 +11,6 @@ export type DocumentTitleState = {
   sessionKey: string;
 };
 
-function titleCaseAgentId(value: string): string {
-  return value
-    .split(/[-_]+/g)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 function resolveAgentLabel(state: DocumentTitleState): string {
   const assistantName = state.assistantName.trim();
   const assistantAgentId = state.assistantAgentId?.trim() || null;
@@ -33,7 +25,7 @@ function resolveAgentLabel(state: DocumentTitleState): string {
     return assistantName;
   }
 
-  return titleCaseAgentId(agentId);
+  return agentId;
 }
 
 export function buildDocumentTitle(state: DocumentTitleState): string {

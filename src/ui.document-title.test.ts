@@ -29,6 +29,6 @@ describe("buildDocumentTitle", () => {
         assistantAgentId: null,
         sessionKey: "agent:tony:main",
       }),
-    ).toBe("OpenClaw - Tony");
+    ).toBe("OpenClaw - tony");
   });
 });
