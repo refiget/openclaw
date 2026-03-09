@@ -17,6 +17,7 @@ import {
   syncThemeWithSettings,
 } from "./app-settings.ts";
 import { loadControlUiBootstrapConfig } from "./controllers/control-ui-bootstrap.ts";
+import { syncDocumentTitle } from "./document-title.ts";
 import type { Tab } from "./navigation.ts";
 
 type LifecycleHost = {
@@ -28,6 +29,7 @@ type LifecycleHost = {
   assistantName: string;
   assistantAvatar: string | null;
   assistantAgentId: string | null;
+  sessionKey: string;
   serverVersion: string | null;
   chatHasAutoScrolled: boolean;
   chatManualRefreshInFlight: boolean;
@@ -45,6 +47,7 @@ type LifecycleHost = {
 export function handleConnected(host: LifecycleHost) {
   const connectGeneration = ++host.connectGeneration;
   host.basePath = inferBasePath();
+  syncDocumentTitle(host);
   const bootstrapReady = loadControlUiBootstrapConfig(host);
   applySettingsFromUrl(host as unknown as Parameters<typeof applySettingsFromUrl>[0]);
   syncTabWithLocation(host as unknown as Parameters<typeof syncTabWithLocation>[0], true);
@@ -85,6 +88,13 @@ export function handleDisconnected(host: LifecycleHost) {
 }
 
 export function handleUpdated(host: LifecycleHost, changed: Map<PropertyKey, unknown>) {
+  if (
+    changed.has("assistantName") ||
+    changed.has("assistantAgentId") ||
+    changed.has("sessionKey")
+  ) {
+    syncDocumentTitle(host);
+  }
   if (host.tab === "chat" && host.chatManualRefreshInFlight) {
     return;
   }
